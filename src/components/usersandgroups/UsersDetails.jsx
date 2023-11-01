@@ -313,6 +313,8 @@ const UsersDetails = () => {
             ? chats?.map((data) => {
                 return (
                   <ChatUsers
+                    setSelectedChat={setSelectedChat}
+                    data={data}
                     key={data._id}
                     iconSize={36}
                     nameSize={20}
@@ -320,6 +322,7 @@ const UsersDetails = () => {
                     userDetails={data.users}
                     isGroup={data.isGroupChat}
                     chatname={data.chatName}
+                    loggedUser={loggedUser._id}
                   />
                 );
               })

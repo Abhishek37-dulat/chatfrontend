@@ -3,7 +3,8 @@ import React from "react";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import MessageBox from "./MessageBox";
 import { ChatState } from "../../Context/ChatProvider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const ChatMain = styled(Box)(({ theme }) => ({
   //   border: "1px solid black",
@@ -107,6 +108,53 @@ const ChatBox = () => {
   const [newMessage, setNewMessage] = useState("");
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
+
+  const fetchMessages = async () => {
+    if (!selectedChat) return;
+
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `/api/message/${selectedChat._id}`,
+        config
+      );
+      setMessages(data);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const sendMessage = async (event) => {
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      setNewMessage("");
+      const { data } = await axios.post(
+        "/api/message",
+        {
+          content: newMessage,
+          chatId: selectedChat,
+        },
+        config
+      );
+      setMessages([...messages, data]);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
+  console.log(selectedChat, messages, user);
   return (
     <ChatMain>
       {/* <EmptyBox>
@@ -123,28 +171,19 @@ const ChatBox = () => {
         </Box>
       </TopBox>
       <MidBox>
-        <UserMessages>
-          <MessageBox />
-        </UserMessages>
-        <YourMessages>
-          <MessageBox />
-          <MessageBox />
-          <MessageBox />
-        </YourMessages>
-        <UserMessages>
-          <MessageBox />
-        </UserMessages>
-        <UserMessages>
-          <MessageBox />
-        </UserMessages>
-        <YourMessages>
-          <MessageBox />
-          <MessageBox />
-          <MessageBox />
-        </YourMessages>
-        <UserMessages>
-          <MessageBox />
-        </UserMessages>
+        {messages?.length > 0
+          ? messages?.map((data) => {
+              return data?._id === user?._id ? (
+                <YourMessages>
+                  <MessageBox data={data} />
+                </YourMessages>
+              ) : (
+                <UserMessages>
+                  <MessageBox data={data} />
+                </UserMessages>
+              );
+            })
+          : `start chatting with me`}
       </MidBox>
       <FooterBox>
         <Box>

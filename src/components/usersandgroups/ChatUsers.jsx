@@ -22,9 +22,12 @@ const ChatUsers = ({
   userDetails,
   isGroup,
   chatname,
+  setSelectedChat,
+  data,
+  loggedUser,
 }) => {
   return (
-    <SingleBox>
+    <SingleBox onClick={() => setSelectedChat(data)}>
       <Box>
         <AccountCircleIcon style={{ fontSize: `${iconSize}px` }} />
       </Box>
@@ -37,7 +40,11 @@ const ChatUsers = ({
             fontSize: `${nameSize}px`,
           }}
         >
-          {isGroup ? chatname : userDetails[1].name}{" "}
+          {isGroup
+            ? chatname
+            : userDetails?.map((data) =>
+                data._id !== loggedUser ? data.name : ""
+              )}{" "}
           {isGroup ? "(Group)" : "(Chat)"}
         </Typography>
         {isGroup ? (
@@ -51,7 +58,7 @@ const ChatUsers = ({
                     fontSize: `${emailSize}px`,
                   }}
                 >
-                  {index !== userDetails.length - 1 ? data.name : "You"}
+                  {data._id !== loggedUser ? data.name : "You"}
                 </Typography>
               );
             })
