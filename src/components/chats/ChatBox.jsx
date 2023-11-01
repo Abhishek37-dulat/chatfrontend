@@ -133,7 +133,7 @@ const ChatBox = () => {
       };
 
       const { data } = await axios.get(
-        `/api/message/${selectedChat._id}`,
+        `https://chat-server-7zey.onrender.com/api/message/${selectedChat._id}`,
         config
       );
       setMessages(data);
@@ -160,7 +160,7 @@ const ChatBox = () => {
       };
 
       const { data } = await axios.post(
-        "/api/message",
+        "https://chat-server-7zey.onrender.com/api/message",
         {
           content: newMessage,
           chatId: selectedChat,
@@ -229,7 +229,9 @@ const ChatBox = () => {
         </Box>
       </FooterBox>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{"Profile"}</DialogTitle>
+        <DialogTitle>
+          {selectedChat?.isGroupChat ? "Group Members" : "Profile"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             {selectedChat &&

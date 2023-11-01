@@ -44,7 +44,7 @@ const LoginForm = () => {
         };
 
         const { data } = await axios.post(
-          "http://localhost:7000/api/user/login",
+          "https://chat-server-7zey.onrender.com/user/login",
           { email: userEmail, password: userPassword },
           config
         );

@@ -51,7 +51,7 @@ const RegisterForm = ({ registerDisplay, setRegisterDisplay }) => {
             },
           };
           const { data } = await axios.post(
-            "http://localhost:7000/api/user",
+            "https://chat-server-7zey.onrender.com/api/user",
             {
               name: userName,
               email: userEmail,

@@ -162,7 +162,7 @@ const UsersDetails = () => {
       };
 
       const { data } = await axios.get(
-        `http://localhost:7000/api/user?search=${search}`,
+        `https://chat-server-7zey.onrender.com/api/user?search=${search}`,
         config
       );
 
@@ -181,7 +181,7 @@ const UsersDetails = () => {
       };
 
       const { data } = await axios.get(
-        `http://localhost:7000/api/user?search=${search}`,
+        `https://chat-server-7zey.onrender.com/api/user?search=${search}`,
         config
       );
 
@@ -246,7 +246,7 @@ const UsersDetails = () => {
       };
 
       const { data } = await axios.post(
-        `http://localhost:7000/api/chat`,
+        `https://chat-server-7zey.onrender.com/api/chat`,
         { userId },
         config
       );
@@ -269,7 +269,10 @@ const UsersDetails = () => {
         },
       };
 
-      const { data } = await axios.get("/api/chat", config);
+      const { data } = await axios.get(
+        "https://chat-server-7zey.onrender.com/api/chat",
+        config
+      );
       setChats(data);
     } catch (error) {
       console.log("fetchchat error:", error);
