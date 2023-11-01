@@ -244,6 +244,7 @@ const UsersDetails = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
+
       const { data } = await axios.post(
         `http://localhost:7000/api/chat`,
         { userId },
@@ -280,7 +281,6 @@ const UsersDetails = () => {
     );
 
     fetchChats();
-    // eslint-disable-next-line
   }, []);
 
   // #####################################################################################
@@ -309,7 +309,21 @@ const UsersDetails = () => {
       </TopBox>
       {!dataShowCondition ? (
         <UserBox>
-          <ChatUsers iconSize={36} nameSize={20} emailSize={14} />
+          {chats?.length > 0
+            ? chats?.map((data) => {
+                return (
+                  <ChatUsers
+                    key={data._id}
+                    iconSize={36}
+                    nameSize={20}
+                    emailSize={14}
+                    userDetails={data.users}
+                    isGroup={data.isGroupChat}
+                    chatname={data.chatName}
+                  />
+                );
+              })
+            : "Start chat"}
         </UserBox>
       ) : (
         <ResultBox>

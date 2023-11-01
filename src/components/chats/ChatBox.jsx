@@ -2,6 +2,8 @@ import { Box, IconButton, Typography, styled } from "@mui/material";
 import React from "react";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import MessageBox from "./MessageBox";
+import { ChatState } from "../../Context/ChatProvider";
+import { useState } from "react";
 
 const ChatMain = styled(Box)(({ theme }) => ({
   //   border: "1px solid black",
@@ -101,6 +103,10 @@ const FooterBox = styled(Box)(({ theme }) => ({
   },
 }));
 const ChatBox = () => {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const { selectedChat, setSelectedChat, user, notification, setNotification } =
+    ChatState();
   return (
     <ChatMain>
       {/* <EmptyBox>
