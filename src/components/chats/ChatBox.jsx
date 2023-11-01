@@ -164,7 +164,16 @@ const ChatBox = () => {
       </EmptyBox> */}
       <TopBox>
         <Box style={{ marginLeft: "10px" }}>
-          <Typography style={{ fontSize: "24px" }}>Abhishek Dulat</Typography>
+          <Typography style={{ fontSize: "24px" }}>
+            {selectedChat?.isGroupChat
+              ? selectedChat?.chatName
+              : selectedChat?.users?.map((data) => {
+                  return data?._id !== user?._id ? data.name : "";
+                })}
+            {selectedChat?.isGroupChat
+              ? `(${selectedChat?.users?.length} Group)`
+              : ""}
+          </Typography>
         </Box>
         <Box style={{ marginRight: "10px" }}>
           <IconButton>

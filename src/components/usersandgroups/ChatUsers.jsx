@@ -47,9 +47,24 @@ const ChatUsers = ({
               )}{" "}
           {isGroup ? "(Group)" : "(Chat)"}
         </Typography>
-        {isGroup ? (
-          userDetails.length > 0 ? (
-            userDetails?.map((data, index) => {
+        {isGroup
+          ? userDetails.length > 0
+            ? userDetails?.map((data, index) => {
+                return (
+                  <Typography
+                    style={{
+                      marginLeft: "5px",
+                      marginRight: "5px",
+                      fontSize: `${emailSize}px`,
+                    }}
+                  >
+                    {data._id !== loggedUser ? data.name : "You"}
+                  </Typography>
+                );
+              })
+            : "network error"
+          : userDetails.length > 0
+          ? userDetails?.map((data, index) => {
               return (
                 <Typography
                   style={{
@@ -58,24 +73,11 @@ const ChatUsers = ({
                     fontSize: `${emailSize}px`,
                   }}
                 >
-                  {data._id !== loggedUser ? data.name : "You"}
+                  {data._id !== loggedUser ? data.email : ""}
                 </Typography>
               );
             })
-          ) : (
-            "network error"
-          )
-        ) : (
-          <Typography
-            style={{
-              marginLeft: "5px",
-              marginRight: "5px",
-              fontSize: `${emailSize}px`,
-            }}
-          >
-            {userDetails[1].email}
-          </Typography>
-        )}
+          : "network error"}
       </Box>
     </SingleBox>
   );

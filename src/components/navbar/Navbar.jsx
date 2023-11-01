@@ -18,6 +18,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import LogoutIcon from "@mui/icons-material/Logout";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useNavigate } from "react-router-dom";
+import { ChatState } from "../../Context/ChatProvider";
 
 const NavbarMain = styled(Box)(({ theme }) => ({
   //   border: "1px solid black",
@@ -81,6 +82,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [drop, setDrop] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const { user } = ChatState();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -103,7 +105,7 @@ const Navbar = () => {
       <ProfileBox onClick={() => setDrop(!drop)}>
         <AccountCircleIcon />
         <Typography style={{ marginLeft: "5px", marginRight: "5px" }}>
-          Abhishek
+          {user.name}
         </Typography>
         {drop ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
 
@@ -137,12 +139,10 @@ const Navbar = () => {
                   color: "#536DFE",
                 }}
               >
-                Abhishek
+                {user.name}
               </Typography>
             </Box>
-            <Box style={{ marginTop: "10px" }}>
-              Abhishek11906997dulat@gmail.com
-            </Box>
+            <Box style={{ marginTop: "10px" }}>{user.email}</Box>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

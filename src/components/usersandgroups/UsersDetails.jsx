@@ -262,6 +262,7 @@ const UsersDetails = () => {
 
   const fetchChats = async () => {
     try {
+      console.log(user);
       const config = {
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -271,7 +272,7 @@ const UsersDetails = () => {
       const { data } = await axios.get("/api/chat", config);
       setChats(data);
     } catch (error) {
-      alert("fetchchat error:", error.message);
+      console.log("fetchchat error:", error);
     }
   };
 
@@ -281,7 +282,7 @@ const UsersDetails = () => {
     );
 
     fetchChats();
-  }, []);
+  }, [user]);
 
   // #####################################################################################
 
