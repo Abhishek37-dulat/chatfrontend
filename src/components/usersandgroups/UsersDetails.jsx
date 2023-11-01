@@ -17,6 +17,7 @@ import InputComponent from "./InputComponent";
 import { ChatState } from "../../Context/ChatProvider";
 import axios from "axios";
 import ChatUsers from "./ChatUsers";
+import { useEffect } from "react";
 
 const UserMain = styled(Box)(({ theme }) => ({
   //   border: "1px solid black",
@@ -135,10 +136,15 @@ const UsersDetails = () => {
   const [formCondition, setFormCondition] = useState(false);
   const [dataShowCondition, setDataShowCondition] = useState(false);
   const [users, setUsers] = useState([]);
+  const [usersAdd, setUsersAdd] = useState([]);
+  const [usersGroup, setUsersGroup] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [userName, setUserName] = useState("");
   const [search, setSearch] = useState("");
+  const [loggedUser, setLoggedUser] = useState();
+
   const {
+    selectedChat,
     setSelectedChat,
     user,
     notification,
@@ -146,6 +152,25 @@ const UsersDetails = () => {
     chats,
     setChats,
   } = ChatState();
+  const handleSearchAdd = async (e) => {
+    e.preventDefault();
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `http://localhost:7000/api/user?search=${search}`,
+        config
+      );
+
+      setUsersAdd(data);
+    } catch (error) {
+      alert(error);
+    }
+  };
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
@@ -172,12 +197,41 @@ const UsersDetails = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setFormCondition(true);
+    if (groupName === "" || usersGroup.length <= 0) {
+      alert("atlest one user is required and group name is required!");
+    } else {
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+        const { data } = await axios.post(
+          `/api/chat/group`,
+          {
+            name: groupName,
+            users: JSON.stringify(usersGroup.map((u) => u._id)),
+          },
+          config
+        );
+        setChats([data, ...chats]);
+        handleClose();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
   };
-  const handleRemoveUser = () => {};
+  const handleRemoveUser = (data) => {
+    let tempdata = usersGroup.filter((d) => d._id !== data._id);
+    setUsersGroup(tempdata);
+  };
   const handleInputBox = () => {
     setDataShowCondition(true);
+  };
+  const handleSelectedAdd = async (data) => {
+    setUsersGroup((prev) => [...prev, data]);
   };
   const handleSelected = async (userId) => {
     setDataShowCondition(false);
@@ -195,14 +249,43 @@ const UsersDetails = () => {
         { userId },
         config
       );
-
+      console.log(data);
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
     } catch (error) {
       alert(error.message);
     }
   };
-  console.log(users, chats);
+
+  // #####################################################################################
+
+  const fetchChats = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.get("/api/chat", config);
+      setChats(data);
+    } catch (error) {
+      alert("fetchchat error:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    setLoggedUser(
+      JSON.parse(localStorage.getItem("userInformationChatAppAbhishekDulat"))
+    );
+
+    fetchChats();
+    // eslint-disable-next-line
+  }, []);
+
+  // #####################################################################################
+
+  console.log(users, chats, usersGroup, loggedUser, selectedChat);
   return (
     <UserMain>
       <TopBox>
@@ -270,32 +353,51 @@ const UsersDetails = () => {
               />
             </Box>
             <Box style={{ marginTop: "10px" }}>
-              <InputComponent
-                title={userName}
-                setTitle={setUserName}
-                titlename="Add Users"
-                errorname="Please Enter Valid User Name"
-                placeholdername="Search User"
-                errorContition={formCondition}
-                importantRequired={false}
-                inputType="text"
-              />
+              <form onSubmit={handleSearchAdd}>
+                <InputComponent
+                  title={userName}
+                  setTitle={setUserName}
+                  titlename="Add Users"
+                  errorname="Please Enter Valid User Name"
+                  placeholdername="Search User"
+                  errorContition={formCondition}
+                  importantRequired={false}
+                  inputType="text"
+                />
+              </form>
             </Box>
             <Box
               style={{ marginTop: "10px", display: "flex", flexWrap: "wrap" }}
             >
-              <Chip
-                style={{ margin: "2px" }}
-                label="Abhishek"
-                onDelete={() => handleRemoveUser()}
-              />
+              {usersGroup.length > 0
+                ? usersGroup?.map((data) => {
+                    return (
+                      <Chip
+                        style={{ margin: "2px" }}
+                        label={data.name}
+                        onDelete={() => handleRemoveUser(data)}
+                      />
+                    );
+                  })
+                : "Select Users"}
             </Box>
             <UserScrollSearch>
-              <SinglUser iconSize={24} nameSize={16} emailSize={10} />
-              <SinglUser iconSize={24} nameSize={16} emailSize={10} />
-              <SinglUser iconSize={24} nameSize={16} emailSize={10} />
-              <SinglUser iconSize={24} nameSize={16} emailSize={10} />
-              <SinglUser iconSize={24} nameSize={16} emailSize={10} />
+              {usersAdd.length > 0
+                ? usersAdd?.map((data) => {
+                    return (
+                      <SinglUser
+                        handleSelected={handleSelectedAdd}
+                        data={data}
+                        key={data._id}
+                        iconSize={36}
+                        nameSize={20}
+                        emailSize={14}
+                        name={data.name}
+                        email={data.email}
+                      />
+                    );
+                  })
+                : null}
             </UserScrollSearch>
           </DialogContentText>
         </DialogContent>
