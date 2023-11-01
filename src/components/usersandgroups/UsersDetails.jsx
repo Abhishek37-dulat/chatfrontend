@@ -162,7 +162,7 @@ const UsersDetails = () => {
       };
 
       const { data } = await axios.get(
-        `https://chat-server-7zey.onrender.com/api/user?search=${search}`,
+        `${process.env.REACT_APP_URL}/api/user?search=${search}`,
         config
       );
 
@@ -181,7 +181,7 @@ const UsersDetails = () => {
       };
 
       const { data } = await axios.get(
-        `https://chat-server-7zey.onrender.com/api/user?search=${search}`,
+        `${process.env.REACT_APP_URL}/api/user?search=${search}`,
         config
       );
 
@@ -209,7 +209,7 @@ const UsersDetails = () => {
           },
         };
         const { data } = await axios.post(
-          `/api/chat/group`,
+          `${process.env.REACT_APP_URL}/api/chat/group`,
           {
             name: groupName,
             users: JSON.stringify(usersGroup.map((u) => u._id)),
@@ -246,7 +246,7 @@ const UsersDetails = () => {
       };
 
       const { data } = await axios.post(
-        `https://chat-server-7zey.onrender.com/api/chat`,
+        `${process.env.REACT_APP_URL}/api/chat`,
         { userId },
         config
       );
@@ -270,7 +270,7 @@ const UsersDetails = () => {
       };
 
       const { data } = await axios.get(
-        "https://chat-server-7zey.onrender.com/api/chat",
+        `${process.env.REACT_APP_URL}/api/chat`,
         config
       );
       setChats(data);

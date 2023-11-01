@@ -105,7 +105,7 @@ const Navbar = () => {
       <ProfileBox onClick={() => setDrop(!drop)}>
         <AccountCircleIcon />
         <Typography style={{ marginLeft: "5px", marginRight: "5px" }}>
-          {user.name}
+          {user?.name}
         </Typography>
         {drop ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
 
@@ -139,10 +139,10 @@ const Navbar = () => {
                   color: "#536DFE",
                 }}
               >
-                {user.name}
+                {user?.name}
               </Typography>
             </Box>
-            <Box style={{ marginTop: "10px" }}>{user.email}</Box>
+            <Box style={{ marginTop: "10px" }}>{user?.email}</Box>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

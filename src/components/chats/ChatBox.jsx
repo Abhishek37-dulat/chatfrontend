@@ -17,6 +17,8 @@ import { ChatState } from "../../Context/ChatProvider";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import io from "socket.io-client";
+var socket, selectedChatCompare;
 
 const ChatMain = styled(Box)(({ theme }) => ({
   //   border: "1px solid black",
@@ -118,7 +120,10 @@ const FooterBox = styled(Box)(({ theme }) => ({
 const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false);
   const [open, setOpen] = React.useState(false);
+  const [typing, setTyping] = useState(false);
+  const [istyping, setIsTyping] = useState(false);
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
 
@@ -133,10 +138,11 @@ const ChatBox = () => {
       };
 
       const { data } = await axios.get(
-        `https://chat-server-7zey.onrender.com/api/message/${selectedChat._id}`,
+        `${process.env.REACT_APP_URL}/api/message/${selectedChat._id}`,
         config
       );
       setMessages(data);
+      socket.emit("join chat", selectedChat._id);
     } catch (error) {
       alert(error.message);
     }
@@ -151,6 +157,7 @@ const ChatBox = () => {
 
   const sendMessage = async (event) => {
     event.preventDefault();
+    socket.emit("stop typing", selectedChat._id);
     try {
       const config = {
         headers: {
@@ -160,7 +167,7 @@ const ChatBox = () => {
       };
 
       const { data } = await axios.post(
-        "https://chat-server-7zey.onrender.com/api/message",
+        `${process.env.REACT_APP_URL}/api/message`,
         {
           content: newMessage,
           chatId: selectedChat,
@@ -168,6 +175,7 @@ const ChatBox = () => {
         config
       );
       setNewMessage("");
+      socket.emit("new message", data);
       setMessages([...messages, data]);
     } catch (error) {
       alert(error.message);
@@ -175,7 +183,29 @@ const ChatBox = () => {
   };
   useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
+  useEffect(() => {
+    socket = io(process.env.REACT_APP_URL);
+    socket.emit("setup", user);
+    socket.on("connected", () => setSocketConnected(true));
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
+  }, []);
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification]);
+        }
+      } else {
+        setMessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
   console.log(selectedChat, messages, user);
   return (
     <ChatMain>
