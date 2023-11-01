@@ -1,10 +1,22 @@
-import { Box, IconButton, Typography, styled } from "@mui/material";
+import {
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Typography,
+  styled,
+  Button,
+} from "@mui/material";
 import React from "react";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import MessageBox from "./MessageBox";
 import { ChatState } from "../../Context/ChatProvider";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const ChatMain = styled(Box)(({ theme }) => ({
   //   border: "1px solid black",
@@ -106,6 +118,7 @@ const FooterBox = styled(Box)(({ theme }) => ({
 const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [open, setOpen] = React.useState(false);
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
 
@@ -127,6 +140,13 @@ const ChatBox = () => {
     } catch (error) {
       alert(error.message);
     }
+  };
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const sendMessage = async (event) => {
@@ -176,7 +196,7 @@ const ChatBox = () => {
           </Typography>
         </Box>
         <Box style={{ marginRight: "10px" }}>
-          <IconButton>
+          <IconButton onClick={() => handleClickOpen()}>
             <RemoveRedEyeIcon />
           </IconButton>
         </Box>
@@ -208,6 +228,40 @@ const ChatBox = () => {
           <button onClick={(e) => sendMessage(e)}>send</button>
         </Box>
       </FooterBox>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>{"Profile"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {selectedChat &&
+              selectedChat?.users?.map((data) => {
+                return data?._id !== user?._id ? (
+                  <>
+                    <Box style={{ display: "flex" }}>
+                      <AccountCircleIcon />
+                      <Typography
+                        style={{
+                          marginLeft: "5px",
+                          marginRight: "5px",
+                          color: "#536DFE",
+                        }}
+                      >
+                        {data.name}
+                      </Typography>
+                    </Box>
+                    <Box style={{ marginTop: "10px" }}>{data.email}</Box>
+                  </>
+                ) : (
+                  ""
+                );
+              })}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </ChatMain>
   );
 };
