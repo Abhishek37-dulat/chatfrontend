@@ -130,6 +130,7 @@ const ChatBox = () => {
   };
 
   const sendMessage = async (event) => {
+    event.preventDefault();
     try {
       const config = {
         headers: {
@@ -137,7 +138,7 @@ const ChatBox = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      setNewMessage("");
+
       const { data } = await axios.post(
         "/api/message",
         {
@@ -146,6 +147,7 @@ const ChatBox = () => {
         },
         config
       );
+      setNewMessage("");
       setMessages([...messages, data]);
     } catch (error) {
       alert(error.message);
@@ -188,8 +190,13 @@ const ChatBox = () => {
       </MidBox>
       <FooterBox>
         <Box>
-          <input type="text" placeholder="Enter Message" />
-          <button>send</button>
+          <input
+            type="text"
+            placeholder="Enter Message"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+          />
+          <button onClick={(e) => sendMessage(e)}>send</button>
         </Box>
       </FooterBox>
     </ChatMain>
