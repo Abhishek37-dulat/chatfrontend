@@ -173,13 +173,14 @@ const ChatBox = () => {
       <MidBox>
         {messages?.length > 0
           ? messages?.map((data) => {
-              return data?._id === user?._id ? (
+              console.log(data?._id, user?._id);
+              return data?.sender?._id === user?._id ? (
                 <YourMessages>
-                  <MessageBox data={data} />
+                  <MessageBox data={data} userid={true} />
                 </YourMessages>
               ) : (
                 <UserMessages>
-                  <MessageBox data={data} />
+                  <MessageBox data={data} userid={false} />
                 </UserMessages>
               );
             })

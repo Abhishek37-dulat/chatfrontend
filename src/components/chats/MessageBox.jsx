@@ -16,8 +16,7 @@ const TextBox = styled(Typography)(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  backgroundColor: "#C5C6C9",
-  color: "#1e1e1e",
+
   boxShadow: "0px 0px 5px rgba(0,0,0,0.3)",
   padding: "10px",
   borderRadius: "5px",
@@ -35,12 +34,19 @@ const UserInfo = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const MessageBox = () => {
+const MessageBox = ({ data, userid }) => {
   return (
     <MessageMain>
-      <TextBox>Message</TextBox>
+      <TextBox
+        style={{
+          backgroundColor: `${userid ? "#C5C6C9" : "#536DFE"}`,
+          color: `${userid ? "#1e1e1e" : "#fff"}`,
+        }}
+      >
+        {data?.content}
+      </TextBox>
       <UserInfo>
-        <Typography>Abhishek</Typography>
+        <Typography>{data?.sender?.name}</Typography>
       </UserInfo>
     </MessageMain>
   );
